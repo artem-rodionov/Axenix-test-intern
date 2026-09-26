@@ -10,33 +10,38 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ListSorterTest {
 
     @ParameterizedTest(name = "Merge sort: {0}")
     @MethodSource("provideTestDataForSortingNaturalOrderInteger")
-    public void mergerSortIntegerNaturalOrderTest(String name, List<Integer> input, List<Integer> expected) {
+    public void mergeSortIntegerNaturalOrderTest(String name, List<Integer> input, List<Integer> expected) {
         ListSorter.mergeSort(input);
         assertEquals(expected, input);
     }
 
     @ParameterizedTest(name = "Merge sort reverse: {0}")
     @MethodSource("provideTestDataForSortingNaturalOrderInteger")
-    public void mergerSortIntegerReverseOrderTest(String name, List<Integer> input, List<Integer> expected) {
+    public void mergeSortIntegerReverseOrderTest(String name, List<Integer> input, List<Integer> expected) {
         ListSorter.mergeSort(input, Comparator.reverseOrder());
-        assertEquals(expected.reversed(), input);
+        if (expected != null) {
+            assertEquals(expected.reversed(), input);
+        } else {
+            assertNull(input);
+        }
     }
 
     @ParameterizedTest(name = "Merge sort custom object: {0}")
     @MethodSource("provideTestDataForSortingCustomObjects")
-    public void mergerSortCustomObjectTest(String name, List<Worker> input, List<Worker> expected) {
+    public void mergeSortCustomObjectTest(String name, List<Worker> input, List<Worker> expected) {
         ListSorter.mergeSort(input, (w1, w2) -> (w1.surname + w1.name).compareToIgnoreCase(w2.surname + w2.name));
         assertEquals(expected, input);
     }
 
     @ParameterizedTest(name = "Merge sort custom object: {0}")
     @MethodSource("provideTestDataForStableSortingCustomObjects")
-    public void mergerSortStableCustomObjectTest(String name, List<Worker> input, List<Worker> expected) {
+    public void mergeSortStableCustomObjectTest(String name, List<Worker> input, List<Worker> expected) {
         ListSorter.mergeSort(input, (w1, w2) -> (w1.surname + w1.name).compareToIgnoreCase(w2.surname + w2.name));
         assertEquals(expected, input);
     }
@@ -52,7 +57,11 @@ class ListSorterTest {
     @MethodSource("provideTestDataForSortingNaturalOrderInteger")
     public void quickSortIntegerReverseOrderTest(String name, List<Integer> input, List<Integer> expected) {
         ListSorter.quickSort(input, Comparator.reverseOrder());
-        assertEquals(expected.reversed(), input);
+        if (expected != null) {
+            assertEquals(expected.reversed(), input);
+        } else {
+            assertNull(input);
+        }
     }
 
     @ParameterizedTest(name = "Quick sort custom object: {0}")
@@ -64,6 +73,10 @@ class ListSorterTest {
 
     private static Stream<Arguments> provideTestDataForSortingNaturalOrderInteger() {
         return Stream.of(
+                Arguments.of("null значения",
+                        null,
+                        null),
+
                 Arguments.of("Пустой список",
                         new ArrayList<>(),
                         List.of()),
