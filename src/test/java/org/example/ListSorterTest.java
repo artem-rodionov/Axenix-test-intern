@@ -1,5 +1,6 @@
 package org.example;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,71 +12,99 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ListSorterTest {
 
+    @Test
+    void nullListIsIgnoredByMergeSort() {
+        List<Integer> list = null;
+        assertNull(ListSorter.mergeSort(list));
+    }
+
+    @Test
+    void nullListIsIgnoredByQuickSort() {
+        List<Integer> list = null;
+        assertNull(ListSorter.quickSort(list));
+    }
+
+    @ParameterizedTest(name = "Merge sort: {0}")
+    @MethodSource("provideTestDataForReturnSameList")
+    void mergeSortReturnsSameList(String name, List<Integer> list) {
+        assertSame(list, ListSorter.mergeSort(list));
+    }
+
+    @ParameterizedTest(name = "Quick sort: {0}")
+    @MethodSource("provideTestDataForReturnSameList")
+    void quickSortReturnsSameList(String name, List<Integer> list) {
+        assertSame(list, ListSorter.quickSort(list));
+    }
+
     @ParameterizedTest(name = "Merge sort: {0}")
     @MethodSource("provideTestDataForSortingNaturalOrderInteger")
-    public void mergeSortIntegerNaturalOrderTest(String name, List<Integer> input, List<Integer> expected) {
+    void mergeSortIntegerNaturalOrder(String name, List<Integer> input, List<Integer> expected) {
         ListSorter.mergeSort(input);
         assertEquals(expected, input);
     }
 
     @ParameterizedTest(name = "Merge sort reverse: {0}")
     @MethodSource("provideTestDataForSortingNaturalOrderInteger")
-    public void mergeSortIntegerReverseOrderTest(String name, List<Integer> input, List<Integer> expected) {
+    void mergeSortIntegerReverseOrder(String name, List<Integer> input, List<Integer> expected) {
         ListSorter.mergeSort(input, Comparator.reverseOrder());
-        if (expected != null) {
-            assertEquals(expected.reversed(), input);
-        } else {
-            assertNull(input);
-        }
+        assertEquals(expected.reversed(), input);
     }
 
     @ParameterizedTest(name = "Merge sort custom object: {0}")
     @MethodSource("provideTestDataForSortingCustomObjects")
-    public void mergeSortCustomObjectTest(String name, List<Worker> input, List<Worker> expected) {
-        ListSorter.mergeSort(input, (w1, w2) -> (w1.surname + w1.name).compareToIgnoreCase(w2.surname + w2.name));
+    void mergeSortCustomObject(String name, List<Worker> input, List<Worker> expected) {
+        ListSorter.mergeSort(input, workerComparator);
         assertEquals(expected, input);
     }
 
     @ParameterizedTest(name = "Merge sort custom object: {0}")
     @MethodSource("provideTestDataForStableSortingCustomObjects")
-    public void mergeSortStableCustomObjectTest(String name, List<Worker> input, List<Worker> expected) {
-        ListSorter.mergeSort(input, (w1, w2) -> (w1.surname + w1.name).compareToIgnoreCase(w2.surname + w2.name));
+    void mergeSortStableCustomObject(String name, List<Worker> input, List<Worker> expected) {
+        ListSorter.mergeSort(input, workerComparator);
         assertEquals(expected, input);
     }
 
     @ParameterizedTest(name = "Quick sort: {0}")
     @MethodSource("provideTestDataForSortingNaturalOrderInteger")
-    public void quickSortIntegerNaturalOrderTest(String name, List<Integer> input, List<Integer> expected) {
+    void quickSortIntegerNaturalOrder(String name, List<Integer> input, List<Integer> expected) {
         ListSorter.quickSort(input);
         assertEquals(expected, input);
     }
 
     @ParameterizedTest(name = "Quick sort: {0}")
     @MethodSource("provideTestDataForSortingNaturalOrderInteger")
-    public void quickSortIntegerReverseOrderTest(String name, List<Integer> input, List<Integer> expected) {
+    void quickSortIntegerReverseOrder(String name, List<Integer> input, List<Integer> expected) {
         ListSorter.quickSort(input, Comparator.reverseOrder());
-        if (expected != null) {
-            assertEquals(expected.reversed(), input);
-        } else {
-            assertNull(input);
-        }
+        assertEquals(expected.reversed(), input);
     }
 
     @ParameterizedTest(name = "Quick sort custom object: {0}")
     @MethodSource("provideTestDataForSortingCustomObjects")
-    public void quickSortCustomObjectTest(String name, List<Worker> input, List<Worker> expected) {
-        ListSorter.quickSort(input, (w1, w2) -> (w1.surname + w1.name).compareToIgnoreCase(w2.surname + w2.name));
+    void quickSortCustomObject(String name, List<Worker> input, List<Worker> expected) {
+        ListSorter.quickSort(input, workerComparator);
         assertEquals(expected, input);
+    }
+
+    private static Stream<Arguments> provideTestDataForReturnSameList() {
+        return Stream.of(
+                Arguments.of("Пустой список",
+                        new ArrayList<>()
+                ),
+                Arguments.of("Список из одного элемента",
+                        new ArrayList<>(List.of(42))
+                ),
+                Arguments.of("Список из трех элементов",
+                        new ArrayList<>(List.of(3, 1, 2))
+                )
+        );
     }
 
     private static Stream<Arguments> provideTestDataForSortingNaturalOrderInteger() {
         return Stream.of(
-                Arguments.of("null значения",
-                        null,
-                        null),
 
                 Arguments.of("Пустой список",
                         new ArrayList<>(),
@@ -291,7 +320,8 @@ class ListSorterTest {
         );
     }
 
-    record Worker(Integer id, String name, String surname) {
-    }
+    record Worker(Integer id, String name, String surname) {}
+
+    private Comparator<Worker> workerComparator = (w1, w2) -> (w1.surname + w1.name).compareToIgnoreCase(w2.surname + w2.name);
 
 }
