@@ -35,20 +35,13 @@ src/
         └── org/example/
             └── ListSorterTest.java
 ```
-
-Путь до тестовых файлов:
-
-```
-src/test/java/org/example/ListSorterTest.java
-```
-
 ## API
 
 ### Сортировка по естественному порядку
 
 ```java
-public static <T extends Comparable<? super T>> void quickSort(List<T> list)
-public static <T extends Comparable<? super T>> void mergeSort(List<T> list)
+public static <T extends Comparable<? super T>> List<T> quickSort(List<T> list)
+public static <T extends Comparable<? super T>> List<T> mergeSort(List<T> list)
 ```
 
 Требует, чтобы элементы реализовывали `Comparable` (сам тип `T` или его предок).
@@ -56,8 +49,8 @@ public static <T extends Comparable<? super T>> void mergeSort(List<T> list)
 ### Сортировка с компаратором
 
 ```java
-public static <T> void quickSort(List<T> list, Comparator<? super T> comparator)
-public static <T> void mergeSort(List<T> list, Comparator<? super T> comparator)
+public static <T> List<T> quickSort(List<T> list, Comparator<? super T> comparator)
+public static <T> List<T> mergeSort(List<T> list, Comparator<? super T> comparator)
 ```
 
 Позволяет задать произвольный порядок сравнения.
@@ -92,10 +85,11 @@ System.out.println(words); // [cherry, banana, apple]
 ## Особенности реализации
 
 - Оба алгоритма работают **in-place** по отношению к исходному списку:
-  результат записывается в тот же объект `List`.
+  результат записывается в тот же объект `List` возвращает его.
 - Пустой список или список из одного элемента не изменяется.
 - `null` в качестве списка игнорируется (метод ничего не делает).
-- QuickSort использует схему разбиения с двумя указателями (Hoare-подобную),
+- Оба метода возвращают тот же список.
+- QuickSort использует схему разбиения с двумя указателями,
   возвращая границы `{i, j}` для рекурсивных вызовов.
 - MergeSort использует один временный список на весь процесс сортировки,
   а не создаёт новый на каждом уровне рекурсии.
@@ -105,15 +99,8 @@ System.out.println(words); // [cherry, banana, apple]
 - Работает только с `List`, у которого есть доступ по индексу за O(1)
   (`ArrayList`, `Vector`). Для `LinkedList` производительность будет ниже
   ожидаемой из-за `get`/`set` за O(n).
-- Не является потокобезопасным.
 
 ## Тестирование
-
-Тесты находятся в:
-
-```
-src/test/java/org/example/ListSorterTest.java
-```
 
 ### Зависимости
 
@@ -132,5 +119,5 @@ src/test/java/org/example/ListSorterTest.java
 Запуск:
 
 ```
-mvn test
+mvn clean test
 ```
