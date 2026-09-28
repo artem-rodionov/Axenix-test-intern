@@ -19,9 +19,11 @@ public class ListSorter {
      *
      * @param list Сортируемый список
      * @param <T> Тип элемента списка
+     *
+     * @return тот же список после сортировки
      */
-    public static <T extends Comparable<? super T>> void quickSort(List<T> list) {
-        quickSort(list, Comparator.naturalOrder());
+    public static <T extends Comparable<? super T>> List<T> quickSort(List<T> list) {
+        return quickSort(list, Comparator.naturalOrder());
     }
 
     /**
@@ -32,10 +34,13 @@ public class ListSorter {
      * @param list Сортируемый список
      * @param comparator Компаратор, который умеет сравнивать T или его родителя
      * @param <T> Тип элемента списка
+     *
+     * @return тот же список после сортировки; {@code null}, если передан {@code null}
      */
-    public static <T> void quickSort(List<T> list, Comparator<? super T> comparator) {
-        if (list == null || list.size() < 2) return;
+    public static <T> List<T> quickSort(List<T> list, Comparator<? super T> comparator) {
+        if (list == null || list.size() < 2) return list;
         quickSort(0, list.size() - 1, list, comparator);
+        return list;
     }
 
     /**
@@ -45,9 +50,11 @@ public class ListSorter {
      *
      * @param list Сортируемый список
      * @param <T> Тип элемента списка
+     *
+     * @return тот же список после сортировки
      */
-    public static <T extends Comparable<? super T>> void mergeSort(List<T> list) {
-        mergeSort(list, Comparator.naturalOrder());
+    public static <T extends Comparable<? super T>> List<T> mergeSort(List<T> list) {
+        return mergeSort(list, Comparator.naturalOrder());
     }
 
     /**
@@ -58,11 +65,14 @@ public class ListSorter {
      * @param list Сортируемый список
      * @param comparator Компаратор, который умеет сравнивать T или его родителя
      * @param <T> Тип элемента списка
+     *
+     * @return тот же список после сортировки; {@code null}, если передан {@code null}
      */
-    public static <T> void mergeSort(List<T> list, Comparator<? super T> comparator) {
-        if (list == null || list.size() < 2) return;
+    public static <T> List<T> mergeSort(List<T> list, Comparator<? super T> comparator) {
+        if (list == null || list.size() < 2) return list;
         List<T> temp = new ArrayList<>(list);
         mergeSort(0, list.size() - 1, list, temp, comparator);
+        return list;
     }
 
     /**
@@ -108,7 +118,7 @@ public class ListSorter {
     }
 
     /**
-     * Метод разбивающий массив относительно опорного элемента,
+     * Метод, разбивающий массив относительно опорного элемента,
      * принимает компаратор для типа T и границы сортируемой части списка.
      * Временная сложность: O(r - l)
      * Пространственная сложность: O(1)
@@ -142,7 +152,7 @@ public class ListSorter {
     }
 
     /**
-     * Метод сливающий два массива, принимает компаратор для типа T и границы сортируемой части списка.
+     * Метод, сливающий два массива, принимает компаратор для типа T и границы сортируемой части списка.
      * Временная сложность: O(r - l)
      * Пространственная сложность: O(1)
      *
@@ -155,21 +165,21 @@ public class ListSorter {
      * @param <T> Тип элемента списка
      */
     private static <T> void merge(int l, int m, int r, List<T> list, List<T> temp, Comparator<? super T> comp) {
-        int l_cur = l;
-        int r_cur = m + 1;
+        int lCur = l;
+        int rCur = m + 1;
         for (int i = l; i <= r; i++) {
-            if (l_cur > m) {
-                temp.set(i, list.get(r_cur));
-                r_cur++;
-            } else if (r_cur > r) {
-                temp.set(i, list.get(l_cur));
-                l_cur++;
-            } else if (comp.compare(list.get(l_cur), list.get(r_cur)) <= 0) {
-                temp.set(i, list.get(l_cur));
-                l_cur++;
+            if (lCur > m) {
+                temp.set(i, list.get(rCur));
+                rCur++;
+            } else if (rCur > r) {
+                temp.set(i, list.get(lCur));
+                lCur++;
+            } else if (comp.compare(list.get(lCur), list.get(rCur)) <= 0) {
+                temp.set(i, list.get(lCur));
+                lCur++;
             } else {
-                temp.set(i, list.get(r_cur));
-                r_cur++;
+                temp.set(i, list.get(rCur));
+                rCur++;
             }
         }
 
